@@ -5,11 +5,25 @@ import plotly.express as px
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 
+
 #Data
-data = pd.read_excel('data/DF_dashboard2.xlsx')
+#data = pd.read_excel('data/DF_dashboard2.xlsx')
+
+@st.cache_data
+def load_data(file_path):
+    df = pd.read_excel(file_path)  # Assuming it's an Excel file
+    return df
+
+# Update the file path to the location on your computer
+file_path = 'data/DF_dashboard2.xlsx'
+data = load_data(file_path)
+
+st.button("Rerun")
 
 
-st.title('Plataforma de terceros - Actualizada al 17/11/2023')
+
+st.title('Dashboard actualizado al 17/11/2023')
+st.markdown("## Información descriptiva de las ventas en monto y unidades", unsafe_allow_html=True)
 
 st.sidebar.image('data/logo.png', caption='Consultora de innovación y transformación digital apalancada en diseño, tecnología y emprendimiento')
 st.sidebar.header('Zona de filtrado')
@@ -98,7 +112,7 @@ figx = go.Figure()
 dfigx= df_select.groupby('Canal')[['MONTO', 'UND']].sum().reset_index()
 figx.add_trace(go.Bar(x=dfigx['Canal'],y=dfigx['MONTO'],name='Monto'))
 figx.add_trace(go.Bar(x=dfigx['Canal'],y=dfigx['UND'],name='Unidades'))
-figx.update_layout(title='Evolución del monto y unidades por Canal')
+figx.update_layout(title='Monto y unidades vendidas por los cuatro canales acumulados hasta 2023-10')
 #st.plotly_chart(figx, use_container_width =True)
 
 left3, right3 = st.columns(2)
@@ -107,7 +121,8 @@ right3.plotly_chart(figx, use_container_width=True)
 
 
 #Grafico 7 
-fig7 = px.treemap(df_select,path=['Canal', 'Medio','des_categoria'],values= 'MONTO', hover_data=['MONTO'], color='des_categoria')
+fig7 = px.treemap(df_select,path=['Canal', 'Medio','des_categoria'],values= 'MONTO', hover_data=['MONTO'], color='des_categoria',
+                  title='Participación de las categorias por medio, dentro de cada canal')
 fig7.update_layout(width=800,height=650)
 st.plotly_chart(fig7)
 
@@ -128,5 +143,19 @@ with top_und:
     st.header('Top en unidades por categoría')
     datcua2 = df_select.groupby('des_categoria')['UND'].sum().reset_index()
     st.write(datcua2)
+
+
+st.markdown("## Proyecciones del top 5 de categorías por monto", unsafe_allow_html=True)
+
+top5monto = ['Aceites', 'Detergentes', 'Salsas', 'Pastas', 'Conservas']
+pro1 = df_select[df_select['des_categoria'].isin(top5monto)]
+pro1 = pro1.groupby(['des_categoria', 'Tiempo'])['MONTO'].sum().reset_index()
+st.write(pro1)
+
+
+
+
+
+
 
 
