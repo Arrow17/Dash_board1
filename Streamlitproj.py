@@ -178,12 +178,16 @@ st.markdown("## Proyecciones del top 5 de categorías por monto", unsafe_allow_h
 
 top5monto = ['Aceites', 'Detergentes', 'Salsas', 'Pastas', 'Conservas']
 pro1 = df_select[df_select['des_categoria'].isin(top5monto)]
-pro1 = pro1.groupby(['des_categoria', 'Tiempo'])['MONTO'].sum().reset_index()
+pro1 = pro1.groupby(['Canal','des_categoria', 'Tiempo'])[['MONTO','UND']].sum().reset_index()
 st.write(pro1)
 
+#figp
 
+df_figp1 = pro1[(pro1['Canal'] == 'CENCOSUD') & (pro1['des_categoria'] == 'Aceites')]
+st.write(df_figp1)
 
-
+st.plotly_chart(px.line(df_figp1, x=df_figp1['Tiempo'],y=df_figp1['MONTO'],title='<b> Evolución del monto total en millones de soles de la categoria Aceites - CENCOSUD </b>',
+               template='plotly_dark'))
 
 
 
