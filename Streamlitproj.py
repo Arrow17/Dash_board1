@@ -55,10 +55,10 @@ endDate = data['Fecha'].max()
 
 col1, col2 = st.columns(2)
 with col1:
-    date1 = st.date_input('Fecha inicial', startDate, format="DD/MM/YYYY")
+    date1 = st.date_input('Fecha inicial', startDate)
 
 with col2:
-    date2 = st.date_input('Fecha final', endDate, format="DD/MM/YYYY")
+    date2 = st.date_input('Fecha final', endDate)
 
 
 
