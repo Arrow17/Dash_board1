@@ -4,6 +4,7 @@ import numpy as np
 import plotly.express as px
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
+from datetime import datetime
 
 
 st.set_page_config(layout='wide', initial_sidebar_state='expanded')
@@ -61,9 +62,22 @@ with col2:
     date2 = st.date_input('Fecha final', endDate)
 
 
+#Funcion para utilizar la variable tiempo
+def convert(fecha_str):
+    f_obj = fecha_str 
+    f_fil = f_obj.strftime('%Y-%m')
+
+    return f_fil
+
+
+date1_1 = convert(date1)
+date2_1 = convert(date2)
+
 
 #df_select = data.query('Canal == @canal & Medio == @medio & des_plataforma == @plataforma & des_subplataforma == @subplataforma & des_marca == @marca')
-df_select = data.query('Canal == @canal & Medio == @medio & des_plataforma == @plataforma & des_subplataforma == @subplataforma & des_marca == @marca & @date1 <= Fecha <= @date2')
+#df_select = data.query('Canal == @canal & Medio == @medio & des_plataforma == @plataforma & des_subplataforma == @subplataforma & des_marca == @marca & @date1 <= Fecha <= @date2')
+df_select = data.query('Canal == @canal & Medio == @medio & des_plataforma == @plataforma & des_subplataforma == @subplataforma & des_marca == @marca')
+df_select = df_select[(df_select['Tiempo'] >= date1_1) & (df_select['Tiempo'] <= date2_1)]
 
 
 #KPIs importantes
@@ -135,6 +149,7 @@ right3.plotly_chart(figx, use_container_width=True)
 
 
 #Grafico 7 
+
 fig7 = px.treemap(df_select, path=['Canal', 'Medio','des_categoria'],values= 'MONTO', hover_data=['MONTO'], color='des_categoria',
                   title='Participación de las categorias por medio, dentro de cada canal')
 fig7.update_layout(width=800,height=650)
