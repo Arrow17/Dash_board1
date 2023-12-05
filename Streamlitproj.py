@@ -6,6 +6,9 @@ import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 
 
+st.set_page_config(layout='wide', initial_sidebar_state='expanded')
+
+
 #Data
 #data = pd.read_excel('data/DF_dashboard2.xlsx')
 
@@ -19,7 +22,6 @@ file_path = 'data/DF_dashboard2.xlsx'
 data = load_data(file_path)
 
 st.button("Rerun")
-
 
 
 st.title('Dashboard actualizado al 17/11/2023')
@@ -47,10 +49,21 @@ subplataforma = st.sidebar.multiselect('Selecciona la subplataforma',
 marca = st.sidebar.multiselect('Selecciona la marca',
                                options=data['des_marca'].unique(),
                                default=data['des_marca'].unique())
+#Obteniendo los valores mínimos y máximos de la DATA
+startDate = data['Fecha'].min()
+endDate = data['Fecha'].max()
+
+col1, col2 = st.columns(2)
+with col1:
+    date1 = st.date_input('Fecha inicial', startDate, format="DD/MM/YYYY")
+
+with col2:
+    date2 = st.date_input('Fecha final', endDate, format="DD/MM/YYYY")
 
 
 
-df_select = data.query('Canal == @canal & Medio == @medio & des_plataforma == @plataforma & des_subplataforma == @subplataforma & des_marca == @marca')
+#df_select = data.query('Canal == @canal & Medio == @medio & des_plataforma == @plataforma & des_subplataforma == @subplataforma & des_marca == @marca')
+df_select = data.query('Canal == @canal & Medio == @medio & des_plataforma == @plataforma & des_subplataforma == @subplataforma & des_marca == @marca & @date1 <= Fecha <= @date2')
 
 
 #KPIs importantes
@@ -65,6 +78,7 @@ with left_column:
 with right_column:
     st.info('Unidades totales', icon='📦')
     st.metric(label='Suma total',value=f'{und_total:,.0f}')
+
 
 #Grafico uno
 dfig1 = df_select.groupby('Tiempo')['MONTO'].sum().reset_index()
@@ -121,7 +135,7 @@ right3.plotly_chart(figx, use_container_width=True)
 
 
 #Grafico 7 
-fig7 = px.treemap(df_select,path=['Canal', 'Medio','des_categoria'],values= 'MONTO', hover_data=['MONTO'], color='des_categoria',
+fig7 = px.treemap(df_select, path=['Canal', 'Medio','des_categoria'],values= 'MONTO', hover_data=['MONTO'], color='des_categoria',
                   title='Participación de las categorias por medio, dentro de cada canal')
 fig7.update_layout(width=800,height=650)
 st.plotly_chart(fig7)
@@ -131,7 +145,7 @@ det_produc, top_monto, top_und = st.tabs(['Detalle de Productos','Top Monto', 'T
 with det_produc:
     st.header('Detalle de productos')
     datcua3 = df_select[['Canal','Medio','des_categoria','Material',
-                         'UND','MONTO']]
+                         'UND','MONTO','Tiempo']]
     st.write(datcua3)
 
 with top_monto:
