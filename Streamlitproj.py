@@ -5,6 +5,8 @@ import plotly.express as px
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 from datetime import datetime
+import pmdarima as pm
+
 
 
 st.set_page_config(layout='wide', initial_sidebar_state='expanded')
@@ -174,20 +176,519 @@ with top_und:
     st.write(datcua2)
 
 
-st.markdown("## Proyecciones del top 5 de categorías por monto", unsafe_allow_html=True)
+st.markdown("## Proyecciones del top 4 de categorías por monto", unsafe_allow_html=True)
 
 top5monto = ['Aceites', 'Detergentes', 'Salsas', 'Pastas', 'Conservas']
 pro1 = df_select[df_select['des_categoria'].isin(top5monto)]
 pro1 = pro1.groupby(['Canal','des_categoria', 'Tiempo'])[['MONTO','UND']].sum().reset_index()
-st.write(pro1)
 
-#figp
+st.markdown("### CENCOSUD", unsafe_allow_html=True)
 
+# PROYECCION
+## figp_1
 df_figp1 = pro1[(pro1['Canal'] == 'CENCOSUD') & (pro1['des_categoria'] == 'Aceites')]
-st.write(df_figp1)
 
-st.plotly_chart(px.line(df_figp1, x=df_figp1['Tiempo'],y=df_figp1['MONTO'],title='<b> Evolución del monto total en millones de soles de la categoria Aceites - CENCOSUD </b>',
-               template='plotly_dark'))
+mod1 = pm.auto_arima(df_figp1['MONTO'], start_p=1, start_q=1, max_p=3, max_q=3, m=12,
+                       start_P=0, seasonal=True, d=1, D=1, trace=True,
+                       n_jobs=-1,  # We can run this in parallel by controlling this option
+                       error_action='ignore',  # don't want to know if an order does not work
+                       suppress_warnings=True,  # don't want convergence warnings
+                       stepwise=False, random=True, random_state=42,  # we can fit a random search (not exhaustive)
+                       n_fits=25)
+
+pre1 = mod1.predict(n_periods = 5)
+
+pre11 = pd.DataFrame(pre1, columns=['MONTO'])
+pre11['Tiempo'] = ['2023-11', '2023-12', '2024-01', '2024-02', '2024-03']
+
+df_figpp1 = df_figp1[['Tiempo', 'MONTO']]
+df_figpp1 = pd.DataFrame(df_figpp1)
+
+df_final_pro1 = pd.concat([df_figpp1, pre11])
+#st.write(df_final_pro1)
+
+fig_forecast_1 = px.line(df_final_pro1, x=df_final_pro1['Tiempo'],y=df_final_pro1['MONTO'],title='<b> Evolución del monto total en miles de soles de la categoria Aceites </b>',
+              template='plotly_dark', markers=True)
+fig_forecast_1.update_traces(line_color="firebrick")
+
+
+## figp_2
+df_figp2 = pro1[(pro1['Canal'] == 'CENCOSUD') & (pro1['des_categoria'] == 'Detergentes')]
+
+mod2 = pm.auto_arima(df_figp2['MONTO'], start_p=1, start_q=1, max_p=3, max_q=3, m=12,
+                       start_P=0, seasonal=True, d=1, D=1, trace=True,
+                       n_jobs=-1,  # We can run this in parallel by controlling this option
+                       error_action='ignore',  # don't want to know if an order does not work
+                       suppress_warnings=True,  # don't want convergence warnings
+                       stepwise=False, random=True, random_state=42,  # we can fit a random search (not exhaustive)
+                       n_fits=25)
+
+pre2 = mod2.predict(n_periods = 5)
+
+pre22 = pd.DataFrame(pre2, columns=['MONTO'])
+pre22['Tiempo'] = ['2023-11', '2023-12', '2024-01', '2024-02', '2024-03']
+
+df_figpp2 = df_figp2[['Tiempo', 'MONTO']]
+df_figpp2 = pd.DataFrame(df_figpp2)
+
+df_final_pro2 = pd.concat([df_figpp2, pre22])
+#st.write(df_final_pro1)
+
+fig_forecast_2 = px.line(df_final_pro2, x=df_final_pro2['Tiempo'],y=df_final_pro2['MONTO'],title='<b> Evolución del monto total en miles de soles de la categoria Detergentes </b>',
+              template='plotly_dark', markers=True)
+fig_forecast_2.update_traces(line_color="firebrick")
+
+
+left, right = st.columns(2)
+left.plotly_chart(fig_forecast_1, use_container_width=True)
+right.plotly_chart(fig_forecast_2, use_container_width=True)
+
+
+########################################################################################
+
+## figp_3
+df_figp3 = pro1[(pro1['Canal'] == 'CENCOSUD') & (pro1['des_categoria'] == 'Salsas')]
+
+mod3 = pm.auto_arima(df_figp3['MONTO'], start_p=1, start_q=1, max_p=3, max_q=3, m=12,
+                       start_P=0, seasonal=True, d=1, D=1, trace=True,
+                       n_jobs=-1,  # We can run this in parallel by controlling this option
+                       error_action='ignore',  # don't want to know if an order does not work
+                       suppress_warnings=True,  # don't want convergence warnings
+                       stepwise=False, random=True, random_state=42,  # we can fit a random search (not exhaustive)
+                       n_fits=25)
+
+pre3 = mod3.predict(n_periods = 5)
+
+pre33 = pd.DataFrame(pre3, columns=['MONTO'])
+pre33['Tiempo'] = ['2023-11', '2023-12', '2024-01', '2024-02', '2024-03']
+
+df_figpp3 = df_figp3[['Tiempo', 'MONTO']]
+df_figpp3 = pd.DataFrame(df_figpp3)
+
+df_final_pro3 = pd.concat([df_figpp3, pre33])
+#st.write(df_final_pro1)
+
+fig_forecast_3 = px.line(df_final_pro3, x=df_final_pro3['Tiempo'],y=df_final_pro3['MONTO'],title='<b> Evolución del monto total en miles de soles de la categoria Salsas </b>',
+              template='plotly_dark', markers=True)
+fig_forecast_3.update_traces(line_color="firebrick")
+
+## figp_4
+df_figp4 = pro1[(pro1['Canal'] == 'CENCOSUD') & (pro1['des_categoria'] == 'Pastas')]
+
+mod4 = pm.auto_arima(df_figp4['MONTO'], start_p=1, start_q=1, max_p=3, max_q=3, m=12,
+                       start_P=0, seasonal=True, d=1, D=1, trace=True,
+                       n_jobs=-1,  # We can run this in parallel by controlling this option
+                       error_action='ignore',  # don't want to know if an order does not work
+                       suppress_warnings=True,  # don't want convergence warnings
+                       stepwise=False, random=True, random_state=42,  # we can fit a random search (not exhaustive)
+                       n_fits=25)
+
+pre4 = mod4.predict(n_periods = 5)
+
+pre44 = pd.DataFrame(pre4, columns=['MONTO'])
+pre44['Tiempo'] = ['2023-11', '2023-12', '2024-01', '2024-02', '2024-03']
+
+df_figpp4 = df_figp4[['Tiempo', 'MONTO']]
+df_figpp4 = pd.DataFrame(df_figpp4)
+
+df_final_pro4 = pd.concat([df_figpp4, pre44])
+#st.write(df_final_pro1)
+
+fig_forecast_4 = px.line(df_final_pro4, x=df_final_pro4['Tiempo'],y=df_final_pro4['MONTO'],title='<b> Evolución del monto total en miles de soles de la categoria Pastas </b>',
+              template='plotly_dark', markers=True)
+fig_forecast_4.update_traces(line_color="firebrick")
+
+
+left, right = st.columns(2)
+left.plotly_chart(fig_forecast_3, use_container_width=True)
+right.plotly_chart(fig_forecast_4, use_container_width=True)
+
+
+
+#################################################################################################################################
+#################################################################################################################################
+
+st.markdown("### SUPESA", unsafe_allow_html=True)
+
+## figp_1
+df_figp1 = pro1[(pro1['Canal'] == 'SUPESA') & (pro1['des_categoria'] == 'Aceites')]
+
+mod1 = pm.auto_arima(df_figp1['MONTO'], start_p=1, start_q=1, max_p=3, max_q=3, m=12,
+                       start_P=0, seasonal=True, d=1, D=1, trace=True,
+                       n_jobs=-1,  # We can run this in parallel by controlling this option
+                       error_action='ignore',  # don't want to know if an order does not work
+                       suppress_warnings=True,  # don't want convergence warnings
+                       stepwise=False, random=True, random_state=42,  # we can fit a random search (not exhaustive)
+                       n_fits=25)
+
+pre1 = mod1.predict(n_periods = 5)
+
+pre11 = pd.DataFrame(pre1, columns=['MONTO'])
+pre11['Tiempo'] = ['2023-11', '2023-12', '2024-01', '2024-02', '2024-03']
+
+df_figpp1 = df_figp1[['Tiempo', 'MONTO']]
+df_figpp1 = pd.DataFrame(df_figpp1)
+
+df_final_pro1 = pd.concat([df_figpp1, pre11])
+#st.write(df_final_pro1)
+
+fig_forecast_1 = px.line(df_final_pro1, x=df_final_pro1['Tiempo'],y=df_final_pro1['MONTO'],title='<b> Evolución del monto total en miles de soles de la categoria Aceites </b>',
+              template='plotly_dark', markers=True)
+fig_forecast_1.update_traces(line_color="#32CD32")
+
+
+## figp_2
+df_figp2 = pro1[(pro1['Canal'] == 'SUPESA') & (pro1['des_categoria'] == 'Detergentes')]
+
+mod2 = pm.auto_arima(df_figp2['MONTO'], start_p=1, start_q=1, max_p=3, max_q=3, m=12,
+                       start_P=0, seasonal=True, d=1, D=1, trace=True,
+                       n_jobs=-1,  # We can run this in parallel by controlling this option
+                       error_action='ignore',  # don't want to know if an order does not work
+                       suppress_warnings=True,  # don't want convergence warnings
+                       stepwise=False, random=True, random_state=42,  # we can fit a random search (not exhaustive)
+                       n_fits=25)
+
+pre2 = mod2.predict(n_periods = 5)
+
+pre22 = pd.DataFrame(pre2, columns=['MONTO'])
+pre22['Tiempo'] = ['2023-11', '2023-12', '2024-01', '2024-02', '2024-03']
+
+df_figpp2 = df_figp2[['Tiempo', 'MONTO']]
+df_figpp2 = pd.DataFrame(df_figpp2)
+
+df_final_pro2 = pd.concat([df_figpp2, pre22])
+#st.write(df_final_pro1)
+
+fig_forecast_2 = px.line(df_final_pro2, x=df_final_pro2['Tiempo'],y=df_final_pro2['MONTO'],title='<b> Evolución del monto total en miles de soles de la categoria Detergentes </b>',
+              template='plotly_dark', markers=True)
+fig_forecast_2.update_traces(line_color="#32CD32")
+
+
+left, right = st.columns(2)
+left.plotly_chart(fig_forecast_1, use_container_width=True)
+right.plotly_chart(fig_forecast_2, use_container_width=True)
+
+
+########################################################################################
+
+## figp_3
+df_figp3 = pro1[(pro1['Canal'] == 'SUPESA') & (pro1['des_categoria'] == 'Salsas')]
+
+mod3 = pm.auto_arima(df_figp3['MONTO'], start_p=1, start_q=1, max_p=3, max_q=3, m=12,
+                       start_P=0, seasonal=True, d=1, D=1, trace=True,
+                       n_jobs=-1,  # We can run this in parallel by controlling this option
+                       error_action='ignore',  # don't want to know if an order does not work
+                       suppress_warnings=True,  # don't want convergence warnings
+                       stepwise=False, random=True, random_state=42,  # we can fit a random search (not exhaustive)
+                       n_fits=25)
+
+pre3 = mod3.predict(n_periods = 5)
+
+pre33 = pd.DataFrame(pre3, columns=['MONTO'])
+pre33['Tiempo'] = ['2023-11', '2023-12', '2024-01', '2024-02', '2024-03']
+
+df_figpp3 = df_figp3[['Tiempo', 'MONTO']]
+df_figpp3 = pd.DataFrame(df_figpp3)
+
+df_final_pro3 = pd.concat([df_figpp3, pre33])
+#st.write(df_final_pro1)
+
+fig_forecast_3 = px.line(df_final_pro3, x=df_final_pro3['Tiempo'],y=df_final_pro3['MONTO'],title='<b> Evolución del monto total en miles de soles de la categoria Salsas </b>',
+              template='plotly_dark', markers=True)
+fig_forecast_3.update_traces(line_color="#32CD32")
+
+## figp_4
+df_figp4 = pro1[(pro1['Canal'] == 'SUPESA') & (pro1['des_categoria'] == 'Pastas')]
+
+mod4 = pm.auto_arima(df_figp4['MONTO'], start_p=1, start_q=1, max_p=3, max_q=3, m=12,
+                       start_P=0, seasonal=True, d=1, D=1, trace=True,
+                       n_jobs=-1,  # We can run this in parallel by controlling this option
+                       error_action='ignore',  # don't want to know if an order does not work
+                       suppress_warnings=True,  # don't want convergence warnings
+                       stepwise=False, random=True, random_state=42,  # we can fit a random search (not exhaustive)
+                       n_fits=25)
+
+pre4 = mod4.predict(n_periods = 5)
+
+pre44 = pd.DataFrame(pre4, columns=['MONTO'])
+pre44['Tiempo'] = ['2023-11', '2023-12', '2024-01', '2024-02', '2024-03']
+
+df_figpp4 = df_figp4[['Tiempo', 'MONTO']]
+df_figpp4 = pd.DataFrame(df_figpp4)
+
+df_final_pro4 = pd.concat([df_figpp4, pre44])
+#st.write(df_final_pro1)
+
+fig_forecast_4 = px.line(df_final_pro4, x=df_final_pro4['Tiempo'],y=df_final_pro4['MONTO'],title='<b> Evolución del monto total en miles de soles de la categoria Pastas </b>',
+              template='plotly_dark', markers=True)
+fig_forecast_4.update_traces(line_color="#32CD32")
+
+
+left, right = st.columns(2)
+left.plotly_chart(fig_forecast_3, use_container_width=True)
+right.plotly_chart(fig_forecast_4, use_container_width=True)
+
+
+#################################################################################################################################
+#################################################################################################################################
+
+st.markdown("### TOTTUS", unsafe_allow_html=True)
+
+## figp_1
+df_figp1 = pro1[(pro1['Canal'] == 'TOTTUS') & (pro1['des_categoria'] == 'Aceites')]
+
+mod1 = pm.auto_arima(df_figp1['MONTO'], start_p=1, start_q=1, max_p=3, max_q=3, m=12,
+                       start_P=0, seasonal=True, d=1, D=1, trace=True,
+                       n_jobs=-1,  # We can run this in parallel by controlling this option
+                       error_action='ignore',  # don't want to know if an order does not work
+                       suppress_warnings=True,  # don't want convergence warnings
+                       stepwise=False, random=True, random_state=42,  # we can fit a random search (not exhaustive)
+                       n_fits=25)
+
+pre1 = mod1.predict(n_periods = 5)
+
+pre11 = pd.DataFrame(pre1, columns=['MONTO'])
+pre11['Tiempo'] = ['2023-11', '2023-12', '2024-01', '2024-02', '2024-03']
+
+df_figpp1 = df_figp1[['Tiempo', 'MONTO']]
+df_figpp1 = pd.DataFrame(df_figpp1)
+
+df_final_pro1 = pd.concat([df_figpp1, pre11])
+#st.write(df_final_pro1)
+
+fig_forecast_1 = px.line(df_final_pro1, x=df_final_pro1['Tiempo'],y=df_final_pro1['MONTO'],title='<b> Evolución del monto total en miles de soles de la categoria Aceites </b>',
+              template='plotly_dark', markers=True)
+fig_forecast_1.update_traces(line_color="#8532cd")
+
+
+## figp_2
+df_figp2 = pro1[(pro1['Canal'] == 'TOTTUS') & (pro1['des_categoria'] == 'Detergentes')]
+
+mod2 = pm.auto_arima(df_figp2['MONTO'], start_p=1, start_q=1, max_p=3, max_q=3, m=12,
+                       start_P=0, seasonal=True, d=1, D=1, trace=True,
+                       n_jobs=-1,  # We can run this in parallel by controlling this option
+                       error_action='ignore',  # don't want to know if an order does not work
+                       suppress_warnings=True,  # don't want convergence warnings
+                       stepwise=False, random=True, random_state=42,  # we can fit a random search (not exhaustive)
+                       n_fits=25)
+
+pre2 = mod2.predict(n_periods = 5)
+
+pre22 = pd.DataFrame(pre2, columns=['MONTO'])
+pre22['Tiempo'] = ['2023-11', '2023-12', '2024-01', '2024-02', '2024-03']
+
+df_figpp2 = df_figp2[['Tiempo', 'MONTO']]
+df_figpp2 = pd.DataFrame(df_figpp2)
+
+df_final_pro2 = pd.concat([df_figpp2, pre22])
+#st.write(df_final_pro1)
+
+fig_forecast_2 = px.line(df_final_pro2, x=df_final_pro2['Tiempo'],y=df_final_pro2['MONTO'],title='<b> Evolución del monto total en miles de soles de la categoria Detergentes </b>',
+              template='plotly_dark', markers=True)
+fig_forecast_2.update_traces(line_color="#8532cd")
+
+
+left, right = st.columns(2)
+left.plotly_chart(fig_forecast_1, use_container_width=True)
+right.plotly_chart(fig_forecast_2, use_container_width=True)
+
+
+########################################################################################
+
+## figp_3
+df_figp3 = pro1[(pro1['Canal'] == 'TOTTUS') & (pro1['des_categoria'] == 'Salsas')]
+
+mod3 = pm.auto_arima(df_figp3['MONTO'], start_p=1, start_q=1, max_p=3, max_q=3, m=12,
+                       start_P=0, seasonal=True, d=1, D=1, trace=True,
+                       n_jobs=-1,  # We can run this in parallel by controlling this option
+                       error_action='ignore',  # don't want to know if an order does not work
+                       suppress_warnings=True,  # don't want convergence warnings
+                       stepwise=False, random=True, random_state=42,  # we can fit a random search (not exhaustive)
+                       n_fits=25)
+
+pre3 = mod3.predict(n_periods = 5)
+
+pre33 = pd.DataFrame(pre3, columns=['MONTO'])
+pre33['Tiempo'] = ['2023-11', '2023-12', '2024-01', '2024-02', '2024-03']
+
+df_figpp3 = df_figp3[['Tiempo', 'MONTO']]
+df_figpp3 = pd.DataFrame(df_figpp3)
+
+df_final_pro3 = pd.concat([df_figpp3, pre33])
+#st.write(df_final_pro1)
+
+fig_forecast_3 = px.line(df_final_pro3, x=df_final_pro3['Tiempo'],y=df_final_pro3['MONTO'],title='<b> Evolución del monto total en miles de soles de la categoria Salsas </b>',
+              template='plotly_dark', markers=True)
+fig_forecast_3.update_traces(line_color="#8532cd")
+
+## figp_4
+df_figp4 = pro1[(pro1['Canal'] == 'TOTTUS') & (pro1['des_categoria'] == 'Pastas')]
+
+mod4 = pm.auto_arima(df_figp4['MONTO'], start_p=1, start_q=1, max_p=3, max_q=3, m=12,
+                       start_P=0, seasonal=True, d=1, D=1, trace=True,
+                       n_jobs=-1,  # We can run this in parallel by controlling this option
+                       error_action='ignore',  # don't want to know if an order does not work
+                       suppress_warnings=True,  # don't want convergence warnings
+                       stepwise=False, random=True, random_state=42,  # we can fit a random search (not exhaustive)
+                       n_fits=25)
+
+pre4 = mod4.predict(n_periods = 5)
+
+pre44 = pd.DataFrame(pre4, columns=['MONTO'])
+pre44['Tiempo'] = ['2023-11', '2023-12', '2024-01', '2024-02', '2024-03']
+
+df_figpp4 = df_figp4[['Tiempo', 'MONTO']]
+df_figpp4 = pd.DataFrame(df_figpp4)
+
+df_final_pro4 = pd.concat([df_figpp4, pre44])
+#st.write(df_final_pro1)
+
+fig_forecast_4 = px.line(df_final_pro4, x=df_final_pro4['Tiempo'],y=df_final_pro4['MONTO'],title='<b> Evolución del monto total en miles de soles de la categoria Pastas </b>',
+              template='plotly_dark', markers=True)
+fig_forecast_4.update_traces(line_color="#8532cd")
+
+
+left, right = st.columns(2)
+left.plotly_chart(fig_forecast_3, use_container_width=True)
+right.plotly_chart(fig_forecast_4, use_container_width=True)
+
+
+
+#################################################################################################################################
+#################################################################################################################################
+
+st.markdown("### RAPPI", unsafe_allow_html=True)
+
+## figp_1
+df_figp1 = pro1[(pro1['Canal'] == 'RAPPI') & (pro1['des_categoria'] == 'Aceites')]
+
+mod1 = pm.auto_arima(df_figp1['MONTO'], start_p=1, start_q=1, max_p=3, max_q=3, m=12,
+                       start_P=0, seasonal=True, d=1, D=1, trace=True,
+                       n_jobs=-1,  # We can run this in parallel by controlling this option
+                       error_action='ignore',  # don't want to know if an order does not work
+                       suppress_warnings=True,  # don't want convergence warnings
+                       stepwise=False, random=True, random_state=42,  # we can fit a random search (not exhaustive)
+                       n_fits=25)
+
+pre1 = mod1.predict(n_periods = 5)
+
+pre11 = pd.DataFrame(pre1, columns=['MONTO'])
+pre11['Tiempo'] = ['2023-11', '2023-12', '2024-01', '2024-02', '2024-03']
+
+df_figpp1 = df_figp1[['Tiempo', 'MONTO']]
+df_figpp1 = pd.DataFrame(df_figpp1)
+
+df_final_pro1 = pd.concat([df_figpp1, pre11])
+#st.write(df_final_pro1)
+
+fig_forecast_1 = px.line(df_final_pro1, x=df_final_pro1['Tiempo'],y=df_final_pro1['MONTO'],title='<b> Evolución del monto total en miles de soles de la categoria Aceites </b>',
+              template='plotly_dark', markers=True)
+fig_forecast_1.update_traces(line_color="#cd8a32")
+
+
+## figp_2
+df_figp2 = pro1[(pro1['Canal'] == 'RAPPI') & (pro1['des_categoria'] == 'Detergentes')]
+
+mod2 = pm.auto_arima(df_figp2['MONTO'], start_p=1, start_q=1, max_p=3, max_q=3, m=12,
+                       start_P=0, seasonal=True, d=1, D=1, trace=True,
+                       n_jobs=-1,  # We can run this in parallel by controlling this option
+                       error_action='ignore',  # don't want to know if an order does not work
+                       suppress_warnings=True,  # don't want convergence warnings
+                       stepwise=False, random=True, random_state=42,  # we can fit a random search (not exhaustive)
+                       n_fits=25)
+
+pre2 = mod2.predict(n_periods = 5)
+
+pre22 = pd.DataFrame(pre2, columns=['MONTO'])
+pre22['Tiempo'] = ['2023-11', '2023-12', '2024-01', '2024-02', '2024-03']
+
+df_figpp2 = df_figp2[['Tiempo', 'MONTO']]
+df_figpp2 = pd.DataFrame(df_figpp2)
+
+df_final_pro2 = pd.concat([df_figpp2, pre22])
+#st.write(df_final_pro1)
+
+fig_forecast_2 = px.line(df_final_pro2, x=df_final_pro2['Tiempo'],y=df_final_pro2['MONTO'],title='<b> Evolución del monto total en miles de soles de la categoria Detergentes </b>',
+              template='plotly_dark', markers=True)
+fig_forecast_2.update_traces(line_color="#cd8a32")
+
+
+left, right = st.columns(2)
+left.plotly_chart(fig_forecast_1, use_container_width=True)
+right.plotly_chart(fig_forecast_2, use_container_width=True)
+
+
+########################################################################################
+
+## figp_3
+df_figp3 = pro1[(pro1['Canal'] == 'RAPPI') & (pro1['des_categoria'] == 'Salsas')]
+
+mod3 = pm.auto_arima(df_figp3['MONTO'], start_p=1, start_q=1, max_p=3, max_q=3, m=12,
+                       start_P=0, seasonal=True, d=1, D=1, trace=True,
+                       n_jobs=-1,  # We can run this in parallel by controlling this option
+                       error_action='ignore',  # don't want to know if an order does not work
+                       suppress_warnings=True,  # don't want convergence warnings
+                       stepwise=False, random=True, random_state=42,  # we can fit a random search (not exhaustive)
+                       n_fits=25)
+
+pre3 = mod3.predict(n_periods = 5)
+
+pre33 = pd.DataFrame(pre3, columns=['MONTO'])
+pre33['Tiempo'] = ['2023-11', '2023-12', '2024-01', '2024-02', '2024-03']
+
+df_figpp3 = df_figp3[['Tiempo', 'MONTO']]
+df_figpp3 = pd.DataFrame(df_figpp3)
+
+df_final_pro3 = pd.concat([df_figpp3, pre33])
+#st.write(df_final_pro1)
+
+fig_forecast_3 = px.line(df_final_pro3, x=df_final_pro3['Tiempo'],y=df_final_pro3['MONTO'],title='<b> Evolución del monto total en miles de soles de la categoria Salsas </b>',
+              template='plotly_dark', markers=True)
+fig_forecast_3.update_traces(line_color="#cd8a32")
+
+## figp_4
+df_figp4 = pro1[(pro1['Canal'] == 'RAPPI') & (pro1['des_categoria'] == 'Pastas')]
+
+mod4 = pm.auto_arima(df_figp4['MONTO'], start_p=1, start_q=1, max_p=3, max_q=3, m=12,
+                       start_P=0, seasonal=True, d=1, D=1, trace=True,
+                       n_jobs=-1,  # We can run this in parallel by controlling this option
+                       error_action='ignore',  # don't want to know if an order does not work
+                       suppress_warnings=True,  # don't want convergence warnings
+                       stepwise=False, random=True, random_state=42,  # we can fit a random search (not exhaustive)
+                       n_fits=25)
+
+pre4 = mod4.predict(n_periods = 5)
+
+pre44 = pd.DataFrame(pre4, columns=['MONTO'])
+pre44['Tiempo'] = ['2023-11', '2023-12', '2024-01', '2024-02', '2024-03']
+
+df_figpp4 = df_figp4[['Tiempo', 'MONTO']]
+df_figpp4 = pd.DataFrame(df_figpp4)
+
+df_final_pro4 = pd.concat([df_figpp4, pre44])
+#st.write(df_final_pro1)
+
+fig_forecast_4 = px.line(df_final_pro4, x=df_final_pro4['Tiempo'],y=df_final_pro4['MONTO'],title='<b> Evolución del monto total en miles de soles de la categoria Pastas </b>',
+              template='plotly_dark', markers=True)
+fig_forecast_4.update_traces(line_color="#cd8a32")
+
+
+left, right = st.columns(2)
+left.plotly_chart(fig_forecast_3, use_container_width=True)
+right.plotly_chart(fig_forecast_4, use_container_width=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
