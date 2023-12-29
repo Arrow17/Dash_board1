@@ -188,15 +188,94 @@ with top_und:
     st.write(datcua2)
 
 
+#SUPESA
+#Categorias más importantes por canal
+#c1_df = df_select[df_select['Canal']=='SUPESA'].groupby('des_categoria')['MONTO'].sum().reset_index()
+#st.write(c1_df)
+#Aceites, Detergentes, Salsas, Pastas y Conservas
 
+st.header('Principales categorías - SUPESA')
+listax = ['Aceites', 'Detergentes', 'Salsas', 'Pastas', 'Conservas']   
+d1_df = df_select[(df_select['Canal'] == 'SUPESA') & (df_select['des_categoria'].isin(listax))].groupby(['des_categoria', 'Fecha'])['MONTO'].sum().reset_index()
+d1_dfw = d1_df.pivot(index='Fecha', columns='des_categoria', values='MONTO')
 
+figu = px.line(d1_dfw, x = d1_dfw.index, y=d1_dfw.columns, labels={'value':'Valor', 'variable':'Serie'}, line_shape='linear',
+               title='Evolución en unidades monetarias')
+st.plotly_chart(figu)
 
+listax = ['Aceites', 'Detergentes', 'Salsas', 'Pastas', 'Conservas']   
+d1_df = df_select[(df_select['Canal'] == 'SUPESA') & (df_select['des_categoria'].isin(listax))].groupby(['des_categoria', 'Fecha'])['UND'].sum().reset_index()
+d1_dfw = d1_df.pivot(index='Fecha', columns='des_categoria', values='UND')
 
+figu = px.line(d1_dfw, x = d1_dfw.index, y=d1_dfw.columns, labels={'value':'Valor', 'variable':'Serie'}, line_shape='linear',
+               title='Evolución en unidades físicas vendidas')
+st.plotly_chart(figu)
 
+#TOTTUS
+#Categorias más importantes por canal
+#c1_df = df_select[df_select['Canal']=='TOTTUS'].groupby('des_categoria')['MONTO'].sum().reset_index()
+#st.write(c1_df)
+#Detergentes, Aceites, Salsas, Pastas, Galletas
 
+st.header('Principales categorías - TOTTUS')
+listax = ['Aceites', 'Detergentes', 'Salsas', 'Pastas', 'Galletas']   
+d1_df = df_select[(df_select['Canal'] == 'TOTTUS') & (df_select['des_categoria'].isin(listax))].groupby(['des_categoria', 'Fecha'])['MONTO'].sum().reset_index()
+d1_dfw = d1_df.pivot(index='Fecha', columns='des_categoria', values='MONTO')
 
+figu = px.line(d1_dfw, x = d1_dfw.index, y=d1_dfw.columns, labels={'value':'Valor', 'variable':'Serie'}, line_shape='linear',
+               title='Evolución en unidades monetarias')
+st.plotly_chart(figu)
+  
+d1_df = df_select[(df_select['Canal'] == 'TOTTUS') & (df_select['des_categoria'].isin(listax))].groupby(['des_categoria', 'Fecha'])['UND'].sum().reset_index()
+d1_dfw = d1_df.pivot(index='Fecha', columns='des_categoria', values='UND')
 
+figu = px.line(d1_dfw, x = d1_dfw.index, y=d1_dfw.columns, labels={'value':'Valor', 'variable':'Serie'}, line_shape='linear',
+               title='Evolución en unidades físicas vendidas')
+st.plotly_chart(figu)
 
+#CENCOSUD
+#Categorias más importantes por canal
+#c1_df = df_select[df_select['Canal']=='CENCOSUD'].groupby('des_categoria')['MONTO'].sum().reset_index()
+#st.write(c1_df)
+#Aceites, Detergentes, Salsas, Pastas, Conservas
+
+st.header('Principales categorías - CENCOSUD')
+listax = ['Aceites', 'Detergentes', 'Salsas', 'Pastas', 'Conservas']   
+d1_df = df_select[(df_select['Canal'] == 'CENCOSUD') & (df_select['des_categoria'].isin(listax))].groupby(['des_categoria', 'Fecha'])['MONTO'].sum().reset_index()
+d1_dfw = d1_df.pivot(index='Fecha', columns='des_categoria', values='MONTO')
+
+figu = px.line(d1_dfw, x = d1_dfw.index, y=d1_dfw.columns, labels={'value':'Valor', 'variable':'Serie'}, line_shape='linear',
+               title='Evolución en unidades monetarias')
+st.plotly_chart(figu)
+  
+d1_df = df_select[(df_select['Canal'] == 'CENCOSUD') & (df_select['des_categoria'].isin(listax))].groupby(['des_categoria', 'Fecha'])['UND'].sum().reset_index()
+d1_dfw = d1_df.pivot(index='Fecha', columns='des_categoria', values='UND')
+
+figu = px.line(d1_dfw, x = d1_dfw.index, y=d1_dfw.columns, labels={'value':'Valor', 'variable':'Serie'}, line_shape='linear',
+               title='Evolución en unidades físicas vendidas')
+st.plotly_chart(figu)
+
+#RAPPI
+#Categorias más importantes por canal
+#c1_df = df_select[df_select['Canal']=='RAPPI'].groupby('des_categoria')['MONTO'].sum().reset_index()
+#st.write(c1_df)
+#Salsas, Detergentes, Aceites, Galletas, Conservas
+
+st.header('Principales categorías - RAPPI')
+listax = ['Aceites', 'Detergentes', 'Salsas', 'Galletas', 'Conservas']   
+d1_df = df_select[(df_select['Canal'] == 'RAPPI') & (df_select['des_categoria'].isin(listax))].groupby(['des_categoria', 'Fecha'])['MONTO'].sum().reset_index()
+d1_dfw = d1_df.pivot(index='Fecha', columns='des_categoria', values='MONTO')
+
+figu = px.line(d1_dfw, x = d1_dfw.index, y=d1_dfw.columns, labels={'value':'Valor', 'variable':'Serie'}, line_shape='linear',
+               title='Evolución en unidades monetarias')
+st.plotly_chart(figu)
+  
+d1_df = df_select[(df_select['Canal'] == 'RAPPI') & (df_select['des_categoria'].isin(listax))].groupby(['des_categoria', 'Fecha'])['UND'].sum().reset_index()
+d1_dfw = d1_df.pivot(index='Fecha', columns='des_categoria', values='UND')
+
+figu = px.line(d1_dfw, x = d1_dfw.index, y=d1_dfw.columns, labels={'value':'Valor', 'variable':'Serie'}, line_shape='linear',
+               title='Evolución en unidades físicas vendidas')
+st.plotly_chart(figu)
 
 
 
