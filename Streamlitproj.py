@@ -13,7 +13,7 @@ st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 
 @st.cache_data
 def load_data(file_path):
-    df = pd.read_excel(file_path)  # Assuming it's an Excel file
+    df = pd.read_excel(file_path)  
     return df
 
 # Update the file path to the location on your computer
